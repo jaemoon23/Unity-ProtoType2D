@@ -72,6 +72,9 @@ crashlytics-build.properties
 *.swp
 *~
 
+# Claude Code temp files
+tmpclaude-*-cwd
+
 # OS generated
 .DS_Store
 .DS_Store?
