@@ -98,6 +98,7 @@ public class LoadingManager : MonoBehaviour
     #region Public Methods - Scene Loading
     /// <summary>
     /// 씬 로드 (페이드 인/아웃 포함)
+    /// 흐름: 페이드 아웃 -> 로딩 UI 표시 -> 씬 로드 -> 진행률 100% -> 로딩 UI 숨김 -> 페이드 인
     /// </summary>
     /// <param name="sceneName">로드할 씬 이름</param>
     /// <param name="showLoadingUI">로딩 UI 표시 여부</param>
@@ -111,24 +112,20 @@ public class LoadingManager : MonoBehaviour
 
         GameLog.Log("LoadingManager", $"씬 로드 시작: {sceneName}");
 
-        // 페이드 아웃
-        if (loadingUI != null)
+        // 1. 페이드 아웃 (화면 어두워짐)
+        if (FadeController.Instance != null)
         {
-            await loadingUI.FadeOutAsync(token);
-
-            if (showLoadingUI)
-            {
-                ShowLoading();
-                UpdateProgress(0f);
-            }
-            else
-            {
-                // 로딩 UI 안 보여줘도 페이드 패널은 비활성화해야 가리지 않음
-                loadingUI.HideFadePanel();
-            }
+            await FadeController.Instance.FadeOutAsync(token);
         }
 
-        // 씬 비동기 로드
+        // 2. 로딩 UI 표시
+        if (showLoadingUI)
+        {
+            ShowLoading();
+            UpdateProgress(0f);
+        }
+
+        // 3. 씬 비동기 로드
         var operation = SceneManager.LoadSceneAsync(sceneName);
         operation.allowSceneActivation = false;
 
@@ -142,7 +139,7 @@ public class LoadingManager : MonoBehaviour
             await UniTask.Yield(PlayerLoopTiming.Update, token);
         }
 
-        // 로딩 완료
+        // 4. 로딩 완료 (진행률 100%)
         if (showLoadingUI)
         {
             UpdateProgress(1f);
@@ -154,14 +151,16 @@ public class LoadingManager : MonoBehaviour
         // 씬 활성화 대기
         await UniTask.WaitUntil(() => operation.isDone, cancellationToken: token);
 
-        // 로딩 UI 숨김 및 페이드 인
-        if (loadingUI != null)
+        // 5. 로딩 UI 숨김
+        if (showLoadingUI)
         {
-            if (showLoadingUI)
-            {
-                HideLoading();
-            }
-            await loadingUI.FadeInAsync(token);
+            HideLoading();
+        }
+
+        // 6. 페이드 인 (화면 밝아짐)
+        if (FadeController.Instance != null)
+        {
+            await FadeController.Instance.FadeInAsync(token);
         }
 
         GameLog.Log("LoadingManager", $"씬 로드 완료: {sceneName}");
