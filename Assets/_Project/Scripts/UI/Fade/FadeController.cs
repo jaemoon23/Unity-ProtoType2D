@@ -8,6 +8,7 @@ using System.Threading;
 /// </summary>
 public class FadeController : MonoBehaviour
 {
+    private const string PREFIX = "FadeController";
     #region Singleton
     private static FadeController instance;
     public static FadeController Instance
@@ -16,7 +17,7 @@ public class FadeController : MonoBehaviour
         {
             if (instance == null)
             {
-                GameLog.Error("FadeController", "인스턴스가 존재하지 않습니다. FadeCanvas가 씬에 있는지 확인해주세요.");
+                GameLog.Error(PREFIX, "인스턴스가 존재하지 않습니다. FadeCanvas가 씬에 있는지 확인해주세요.");
             }
             return instance;
         }
@@ -66,7 +67,7 @@ public class FadeController : MonoBehaviour
             fadeCanvasGroup.gameObject.SetActive(false);
         }
 
-        GameLog.Log("FadeController", "초기화 완료");
+        GameLog.Log(PREFIX, "초기화 완료");
     }
 
     private void OnDestroy()
@@ -115,7 +116,7 @@ public class FadeController : MonoBehaviour
         fadeCanvasGroup.gameObject.SetActive(false);
         IsFading = false;
 
-        GameLog.Log("FadeController", "페이드 인 완료");
+        GameLog.Log(PREFIX, "페이드 인 완료");
     }
 
     /// <summary>
@@ -153,7 +154,7 @@ public class FadeController : MonoBehaviour
         fadeCanvasGroup.alpha = 1f;
         IsFading = false;
 
-        GameLog.Log("FadeController", "페이드 아웃 완료");
+        GameLog.Log(PREFIX, "페이드 아웃 완료");
     }
 
     /// <summary>
