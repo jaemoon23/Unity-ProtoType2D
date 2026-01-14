@@ -1,6 +1,6 @@
 ﻿<Solution>
   <Project Path="MCPForUnity.Editor.csproj" />
-  <Project Path="Game.csproj" />
   <Project Path="MCPForUnity.Runtime.csproj" />
+  <Project Path="Game.csproj" />
   <Project Path="Game.Editor.csproj" />
 </Solution>
