@@ -91,8 +91,8 @@ public class BootLoader : MonoBehaviour
         // 로딩 UI 숨김
         LoadingManager.Instance.HideLoading();
 
-        // 타이틀씬으로 전환
-        await LoadingManager.Instance.LoadSceneAsync(SceneNames.Title, showLoadingUI: false, token);
+        // 타이틀씬으로 전환 (LoadingManager는 싱글톤이라 자체 토큰 사용)
+        await LoadingManager.Instance.LoadSceneAsync(SceneNames.Title, showLoadingUI: false);
     }
 
     private async UniTask InitializeWithProgressAsync(IInitializable initializable, string managerName, CancellationToken cancellationToken)
