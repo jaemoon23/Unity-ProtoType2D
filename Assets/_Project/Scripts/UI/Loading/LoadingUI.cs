@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Cysharp.Threading.Tasks;
+using System.Threading;
 
 /// <summary>
 /// 로딩 UI 컴포넌트
@@ -101,7 +102,7 @@ public class LoadingUI : MonoBehaviour
     /// <summary>
     /// 페이드 인 (화면 밝아짐)
     /// </summary>
-    public async UniTask FadeInAsync()
+    public async UniTask FadeInAsync(CancellationToken cancellationToken = default)
     {
         if (fadeCanvasGroup == null) return;
 
@@ -112,7 +113,7 @@ public class LoadingUI : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
             fadeCanvasGroup.alpha = 1f - (elapsed / fadeDuration);
-            await UniTask.Yield(PlayerLoopTiming.Update);
+            await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
         }
 
         fadeCanvasGroup.alpha = 0f;
@@ -122,7 +123,7 @@ public class LoadingUI : MonoBehaviour
     /// <summary>
     /// 페이드 아웃 (화면 어두워짐)
     /// </summary>
-    public async UniTask FadeOutAsync()
+    public async UniTask FadeOutAsync(CancellationToken cancellationToken = default)
     {
         if (fadeCanvasGroup == null) return;
 
@@ -134,7 +135,7 @@ public class LoadingUI : MonoBehaviour
         {
             elapsed += Time.unscaledDeltaTime;
             fadeCanvasGroup.alpha = elapsed / fadeDuration;
-            await UniTask.Yield(PlayerLoopTiming.Update);
+            await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
         }
 
         fadeCanvasGroup.alpha = 1f;

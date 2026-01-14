@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Cysharp.Threading.Tasks;
+using System.Threading;
 
 /// <summary>
 /// 씬 로딩 및 로딩 UI 관리
@@ -100,14 +101,20 @@ public class LoadingManager : MonoBehaviour
     /// </summary>
     /// <param name="sceneName">로드할 씬 이름</param>
     /// <param name="showLoadingUI">로딩 UI 표시 여부</param>
-    public async UniTask LoadSceneAsync(string sceneName, bool showLoadingUI = true)
+    /// <param name="cancellationToken">취소 토큰</param>
+    public async UniTask LoadSceneAsync(string sceneName, bool showLoadingUI = true, CancellationToken cancellationToken = default)
     {
+        // 토큰이 제공되지 않으면 오브젝트 파괴 시 자동 취소되는 토큰 사용
+        var token = cancellationToken == default
+            ? this.GetCancellationTokenOnDestroy()
+            : cancellationToken;
+
         GameLog.Log("LoadingManager", $"씬 로드 시작: {sceneName}");
 
         // 페이드 아웃
         if (loadingUI != null)
         {
-            await loadingUI.FadeOutAsync();
+            await loadingUI.FadeOutAsync(token);
 
             if (showLoadingUI)
             {
@@ -132,7 +139,7 @@ public class LoadingManager : MonoBehaviour
             {
                 UpdateProgress(operation.progress / 0.9f);
             }
-            await UniTask.Yield(PlayerLoopTiming.Update);
+            await UniTask.Yield(PlayerLoopTiming.Update, token);
         }
 
         // 로딩 완료
@@ -145,7 +152,7 @@ public class LoadingManager : MonoBehaviour
         operation.allowSceneActivation = true;
 
         // 씬 활성화 대기
-        await UniTask.WaitUntil(() => operation.isDone);
+        await UniTask.WaitUntil(() => operation.isDone, cancellationToken: token);
 
         // 로딩 UI 숨김 및 페이드 인
         if (loadingUI != null)
@@ -154,7 +161,7 @@ public class LoadingManager : MonoBehaviour
             {
                 HideLoading();
             }
-            await loadingUI.FadeInAsync();
+            await loadingUI.FadeInAsync(token);
         }
 
         GameLog.Log("LoadingManager", $"씬 로드 완료: {sceneName}");
@@ -163,10 +170,10 @@ public class LoadingManager : MonoBehaviour
     /// <summary>
     /// 씬 로드 (SceneName enum 사용)
     /// </summary>
-    public async UniTask LoadSceneAsync(SceneName sceneName, bool showLoadingUI = true)
+    public async UniTask LoadSceneAsync(SceneName sceneName, bool showLoadingUI = true, CancellationToken cancellationToken = default)
     {
         string sceneNameStr = GetSceneNameString(sceneName);
-        await LoadSceneAsync(sceneNameStr, showLoadingUI);
+        await LoadSceneAsync(sceneNameStr, showLoadingUI, cancellationToken);
     }
     #endregion
 

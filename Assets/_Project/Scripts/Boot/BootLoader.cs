@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Threading;
 using Cysharp.Threading.Tasks;
 
 /// <summary>
@@ -23,6 +24,7 @@ public class BootLoader : MonoBehaviour
     #region Private Fields
     private int completedCount;
     private int totalCount;
+    private CancellationTokenSource cts;
     #endregion
 
     #region Unity Lifecycle
@@ -35,6 +37,10 @@ public class BootLoader : MonoBehaviour
     #region Private Methods
     private async UniTask InitializeAsync()
     {
+        // 취소 토큰 초기화
+        cts = new CancellationTokenSource();
+        var token = cts.Token;
+
         GameLog.Log("BootLoader", "부트 시퀀스 시작");
 
         // LoadingManager가 먼저 준비되어 있어야 함 (Awake에서 초기화됨)
@@ -69,11 +75,11 @@ public class BootLoader : MonoBehaviour
         {
             var mono = initializable as MonoBehaviour;
             string managerName = mono != null ? mono.GetType().Name : "Unknown";
-            initTasks.Add(InitializeWithProgressAsync(initializable, managerName));
+            initTasks.Add(InitializeWithProgressAsync(initializable, managerName, token));
         }
 
         // 최소 로딩 시간도 진행률의 일부로 포함
-        initTasks.Add(MinimumLoadingTimeAsync());
+        initTasks.Add(MinimumLoadingTimeAsync(token));
 
         GameLog.Log("BootLoader", $"총 {initializables.Length}개의 매니저 + 최소 로딩 시간 초기화 시작");
 
@@ -86,13 +92,15 @@ public class BootLoader : MonoBehaviour
         LoadingManager.Instance.HideLoading();
 
         // 타이틀씬으로 전환
-        await LoadingManager.Instance.LoadSceneAsync(SceneNames.Title, showLoadingUI: false);
+        await LoadingManager.Instance.LoadSceneAsync(SceneNames.Title, showLoadingUI: false, token);
     }
 
-    private async UniTask InitializeWithProgressAsync(IInitializable initializable, string managerName)
+    private async UniTask InitializeWithProgressAsync(IInitializable initializable, string managerName, CancellationToken cancellationToken)
     {
         try
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             GameLog.Log("BootLoader", $"{managerName} 초기화 시작");
 
             await initializable.InitializeAsync();
@@ -103,6 +111,11 @@ public class BootLoader : MonoBehaviour
 
             GameLog.Log("BootLoader", $"{managerName} 초기화 완료 ({completedCount}/{totalCount})");
         }
+        catch (System.OperationCanceledException)
+        {
+            GameLog.Log("BootLoader", $"{managerName} 초기화 취소됨");
+            throw;
+        }
         catch (System.Exception ex)
         {
             GameLog.Error("BootLoader", $"{managerName} 초기화 실패: {ex.Message}");
@@ -110,7 +123,7 @@ public class BootLoader : MonoBehaviour
         }
     }
 
-    private async UniTask MinimumLoadingTimeAsync()
+    private async UniTask MinimumLoadingTimeAsync(CancellationToken cancellationToken)
     {
         GameLog.Log("BootLoader", $"최소 로딩 시간 {minimumLoadingTime}초 대기 시작");
 
@@ -119,7 +132,7 @@ public class BootLoader : MonoBehaviour
 
         while (elapsed < minimumLoadingTime)
         {
-            await UniTask.Delay((int)(PROGRESS_UPDATE_INTERVAL * 1000));
+            await UniTask.Delay((int)(PROGRESS_UPDATE_INTERVAL * 1000), cancellationToken: cancellationToken);
             elapsed += PROGRESS_UPDATE_INTERVAL;
 
             // 시간 기반 진행률 (0 ~ 1)
@@ -140,6 +153,13 @@ public class BootLoader : MonoBehaviour
         LoadingManager.Instance.UpdateProgress(progress);
 
         GameLog.Log("BootLoader", $"최소 로딩 시간 완료 ({completedCount}/{totalCount})");
+    }
+
+    private void OnDestroy()
+    {
+        // 오브젝트 파괴 시 취소 토큰 해제
+        cts?.Cancel();
+        cts?.Dispose();
     }
     #endregion
 }
