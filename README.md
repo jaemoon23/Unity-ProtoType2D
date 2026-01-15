@@ -22,36 +22,41 @@ main 브랜치는 보호되어 있습니다.
 브랜치 이름은 다음 규칙을 따라야 합니다.
 
 ```
-<type>/<description>
+<type>/<issue-number>-<description>
 ```
 
 #### 허용되는 타입
 
 | 타입 | 용도 | 예시 |
 |------|------|------|
-| `feature/` | 새 기능 | `feature/login-system` |
-| `fix/` | 버그 수정 | `fix/null-reference-error` |
-| `hotfix/` | 긴급 수정 | `hotfix/crash-on-start` |
-| `refactor/` | 리팩토링 | `refactor/player-controller` |
-| `docs/` | 문서 | `docs/readme-update` |
-| `test/` | 테스트 | `test/unit-tests` |
+| `feature/` | 새 기능 | `feature/12-login-system` |
+| `fix/` | 버그 수정 | `fix/5-null-reference-error` |
+| `hotfix/` | 긴급 수정 | `hotfix/99-crash-on-start` |
+| `refactor/` | 리팩토링 | `refactor/7-player-controller` |
+| `docs/` | 문서 | `docs/3-readme-update` |
+| `test/` | 테스트 | `test/15-unit-tests` |
 
 #### 규칙
 
+- **이슈 번호 필수**: 브랜치 생성 전 이슈를 먼저 생성
 - description은 **소문자, 숫자, 하이픈(-)** 만 사용
 - GitHub Actions에서 자동으로 브랜치 이름 검사
+- **PR 머지 시 연결된 이슈 자동 닫힘**
 
-#### 예시
+#### 워크플로우
 
 ```bash
-# 새 기능 개발
-git checkout -b feature/inventory-system
+# 1. GitHub에서 이슈 생성 (예: #12)
 
-# 버그 수정
-git checkout -b fix/player-death-bug
+# 2. 브랜치 생성
+git checkout -b feature/12-inventory-system
 
-# 긴급 수정
-git checkout -b hotfix/crash-on-start
+# 3. 작업 후 커밋 & 푸시
+git add .
+git commit -m "Add inventory system"
+git push -u origin feature/12-inventory-system
+
+# 4. PR 생성 & 머지 → #12 이슈 자동 닫힘
 ```
 
 ### Merge Method

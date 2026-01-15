@@ -13,8 +13,8 @@ jobs:
           BRANCH_NAME="${{ github.head_ref }}"
           echo "Branch name: $BRANCH_NAME"
 
-          # 허용되는 브랜치 패턴
-          VALID_PATTERN="^(feature|fix|hotfix|refactor|docs|test)/[a-z0-9-]+$"
+          # 허용되는 브랜치 패턴: type/이슈번호-설명
+          VALID_PATTERN="^(feature|fix|hotfix|refactor|docs|test)/[0-9]+-[a-z0-9-]+$"
 
           # main, develop 등은 허용
           if [[ "$BRANCH_NAME" == "main" || "$BRANCH_NAME" == "develop" ]]; then
@@ -30,14 +30,15 @@ jobs:
             echo "Invalid branch name: $BRANCH_NAME"
             echo ""
             echo "Branch name must follow the pattern:"
-            echo "  <type>/<description>"
+            echo "  <type>/<issue-number>-<description>"
             echo ""
             echo "Allowed types: feature, fix, hotfix, refactor, docs, test"
+            echo "Issue number: GitHub issue number (required)"
             echo "Description: lowercase letters, numbers, and hyphens only"
             echo ""
             echo "Examples:"
-            echo "  feature/login-system"
-            echo "  fix/null-reference-error"
-            echo "  hotfix/crash-on-start"
+            echo "  feature/12-login-system"
+            echo "  fix/5-null-reference-error"
+            echo "  hotfix/99-crash-on-start"
             exit 1
           fi
