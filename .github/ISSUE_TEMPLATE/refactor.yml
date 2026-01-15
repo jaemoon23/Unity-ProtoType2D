@@ -1,0 +1,74 @@
+name: 🔧 Refactor
+description: 코드 리팩토링을 위한 Issue
+title: "[Refactor] "
+labels: ["refactor"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        코드 리팩토링을 위한 Issue입니다.
+
+        **브랜치 네이밍**: `refactor/{issue-number}-{description}`
+
+  - type: input
+    id: refactor-target
+    attributes:
+      label: 리팩토링 대상
+      description: 어떤 부분을 리팩토링하시나요?
+      placeholder: 예) PlayerController 클래스 구조 개선
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-problem
+    attributes:
+      label: 현재 문제점
+      description: 현재 코드의 어떤 점이 문제인가요?
+      placeholder: 예) 하나의 클래스에 너무 많은 책임, 코드 중복
+    validations:
+      required: true
+
+  - type: textarea
+    id: refactor-plan
+    attributes:
+      label: 리팩토링 계획
+      description: 어떻게 개선하실 건가요?
+      placeholder: |
+        - [ ] 단일 책임 원칙에 따라 클래스 분리
+        - [ ] 중복 코드 추출하여 유틸리티 메서드로 변환
+        - [ ] 인터페이스 도입
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-improvement
+    attributes:
+      label: 기대 효과
+      description: 리팩토링 후 기대되는 개선 효과는?
+      placeholder: 예) 코드 가독성 향상, 유지보수성 개선, 테스트 용이성 증가
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 우선순위
+      description: 이 리팩토링의 우선순위는?
+      options:
+        - 🔴 Critical (즉시 필요)
+        - 🟠 High (높음)
+        - 🟡 Medium (보통)
+        - 🟢 Low (낮음)
+    validations:
+      required: true
+
+  - type: textarea
+    id: breaking-changes
+    attributes:
+      label: Breaking Changes (선택)
+      description: 기존 코드와의 호환성 문제가 있나요?
+      placeholder: 예) 기존 PlayerController를 사용하는 모든 스크립트 수정 필요
+    validations:
+      required: false

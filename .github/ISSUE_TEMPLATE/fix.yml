@@ -1,0 +1,74 @@
+name: 🔧 Fix
+description: 버그 수정을 위한 Issue
+title: "[Fix] "
+labels: ["bug", "fix"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        버그 수정을 위한 Issue입니다.
+
+        **브랜치 네이밍**: `fix/{issue-number}-{description}`
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 버그 설명
+      description: 어떤 버그를 수정하시나요?
+      placeholder: 예) 플레이어 공격 시 게임 크래시
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: 현재 동작
+      description: 현재 어떻게 동작하나요?
+      placeholder: 예) 공격 버튼을 누르면 NullReferenceException 발생
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: 예상 동작
+      description: 어떻게 동작해야 하나요?
+      placeholder: 예) 공격 버튼을 누르면 공격 애니메이션 재생
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 재현 방법
+      description: 버그를 재현하는 방법은?
+      placeholder: |
+        1. 게임 시작
+        2. 공격 버튼 클릭
+        3. 크래시 발생
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 우선순위
+      description: 이 수정의 우선순위는?
+      options:
+        - 🔴 Critical (즉시 수정 필요)
+        - 🟠 High (높음)
+        - 🟡 Medium (보통)
+        - 🟢 Low (낮음)
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 추가 정보 (선택)
+      description: 스크린샷, 로그, 에러 메시지 등
+      placeholder: 관련 정보를 첨부해주세요
+    validations:
+      required: false

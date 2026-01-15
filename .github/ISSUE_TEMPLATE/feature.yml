@@ -1,0 +1,78 @@
+name: ✨ Feature
+description: 새로운 기능 구현을 위한 Issue
+title: "[Feature] "
+labels: ["enhancement", "feature"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        새로운 기능 구현을 위한 Issue입니다.
+
+        **브랜치 네이밍**: `feature/{issue-number}-{description}`
+
+  - type: input
+    id: feature-name
+    attributes:
+      label: 기능 이름
+      description: 구현할 기능의 이름은?
+      placeholder: 예) 인벤토리 시스템
+    validations:
+      required: true
+
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: 기능 설명
+      description: 기능에 대해 자세히 설명해주세요.
+      placeholder: 예) 플레이어가 아이템을 획득하고 관리할 수 있는 인벤토리 시스템
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance-criteria
+    attributes:
+      label: 완료 조건
+      description: 이 기능이 완료되기 위한 조건은?
+      placeholder: |
+        - [ ] 아이템 획득 기능
+        - [ ] 아이템 사용 기능
+        - [ ] 아이템 버리기 기능
+        - [ ] UI 표시
+    validations:
+      required: true
+
+  - type: dropdown
+    id: role
+    attributes:
+      label: 담당 역할
+      description: 이 작업의 담당 역할은?
+      options:
+        - 프로그래머
+        - 기획자
+        - 아티스트
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 우선순위
+      description: 이 기능의 우선순위는?
+      options:
+        - 🔴 Critical (필수)
+        - 🟠 High (높음)
+        - 🟡 Medium (보통)
+        - 🟢 Low (낮음)
+    validations:
+      required: true
+
+  - type: textarea
+    id: technical-notes
+    attributes:
+      label: 기술적 고려사항 (선택)
+      description: 구현 시 참고할 기술적 정보가 있나요?
+      placeholder: 예) ScriptableObject 기반으로 구현, UniTask 사용
+    validations:
+      required: false
