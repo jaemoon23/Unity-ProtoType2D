@@ -1,0 +1,75 @@
+name: 🐛 Bug Report
+description: 버그 리포트를 위한 Issue
+title: "[Bug] "
+labels: ["bug"]
+assignees: []
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        버그 리포트를 위한 Issue입니다.
+
+        **브랜치 네이밍**: `fix/{issue-number}-{description}`
+
+  - type: textarea
+    id: bug-description
+    attributes:
+      label: 버그 설명
+      description: 어떤 버그가 발생했나요?
+      placeholder: 예) 플레이어가 벽을 통과하는 버그
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: 재현 방법
+      description: 버그를 재현하는 방법을 단계별로 설명해주세요.
+      placeholder: |
+        1. 게임 시작
+        2. 플레이어를 벽 방향으로 이동
+        3. 점프하면서 벽에 부딪힘
+        4. 벽을 통과함
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: 예상 동작
+      description: 원래 어떻게 동작해야 하나요?
+      placeholder: 예) 플레이어가 벽에 막혀야 함
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual-behavior
+    attributes:
+      label: 실제 동작
+      description: 실제로 어떻게 동작하나요?
+      placeholder: 예) 플레이어가 벽을 통과함
+    validations:
+      required: true
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: 우선순위
+      description: 이 버그의 우선순위는?
+      options:
+        - 🔴 Critical (게임 플레이 불가)
+        - 🟠 High (심각한 문제)
+        - 🟡 Medium (보통)
+        - 🟢 Low (사소한 문제)
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-info
+    attributes:
+      label: 추가 정보 (선택)
+      description: 스크린샷, 로그, 에러 메시지 등
+      placeholder: 관련 정보를 첨부해주세요
+    validations:
+      required: false
