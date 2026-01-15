@@ -1,0 +1,43 @@
+name: Branch Naming Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-branch-name:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check branch name
+        run: |
+          BRANCH_NAME="${{ github.head_ref }}"
+          echo "Branch name: $BRANCH_NAME"
+
+          # 허용되는 브랜치 패턴
+          VALID_PATTERN="^(feature|fix|hotfix|refactor|docs|test)/[a-z0-9-]+$"
+
+          # main, develop 등은 허용
+          if [[ "$BRANCH_NAME" == "main" || "$BRANCH_NAME" == "develop" ]]; then
+            echo "Base branch allowed: $BRANCH_NAME"
+            exit 0
+          fi
+
+          # 패턴 검사
+          if [[ $BRANCH_NAME =~ $VALID_PATTERN ]]; then
+            echo "Branch name is valid!"
+            exit 0
+          else
+            echo "Invalid branch name: $BRANCH_NAME"
+            echo ""
+            echo "Branch name must follow the pattern:"
+            echo "  <type>/<description>"
+            echo ""
+            echo "Allowed types: feature, fix, hotfix, refactor, docs, test"
+            echo "Description: lowercase letters, numbers, and hyphens only"
+            echo ""
+            echo "Examples:"
+            echo "  feature/login-system"
+            echo "  fix/null-reference-error"
+            echo "  hotfix/crash-on-start"
+            exit 1
+          fi
